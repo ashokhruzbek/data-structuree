@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yo'l Topish Algoritmlari Vizualizatori</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sarlavha Qismi -->
+        <header class="header">
+            <h1>🎯 Yo'l Topish Algoritmlari Vizualizatori</h1>
+            <p class="subtitle">BFS, Dijkstra va Prim algoritmlarining interaktiv namoyishi</p>
+        </header>
+
+        <!-- Boshqaruv Paneli -->
+        <div class="control-panel">
+            <div class="control-group">
+                <label for="algorithm-select">Algoritm:</label>
+                <select id="algorithm-select">
+                    <option value="bfs">Kenglik Bo'yicha Qidiruv (BFS)</option>
+                    <option value="dijkstra">Dijkstra Algoritmi</option>
+                    <option value="prim">Prim Algoritmi (MST)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="chaser-count">Quvlovchilar Soni:</label>
+                <input type="range" id="chaser-count" min="1" max="5" value="1">
+                <span id="chaser-count-display">1</span>
+            </div>
+
+            <div class="control-group">
+                <label for="speed-control">Animatsiya Tezligi:</label>
+                <input type="range" id="speed-control" min="1" max="10" value="5">
+                <span id="speed-display">5</span>
+            </div>
+
+            <div class="button-group">
+                <button id="clear-obstacles" class="btn btn-secondary">To'siqlarni Tozalash</button>
+                <button id="random-obstacles" class="btn btn-secondary">Tasodifiy To'siqlar</button>
+                <button id="reset-agents" class="btn btn-primary">Agentlarni Qaytarish</button>
+            </div>
+        </div>
+
+        <!-- Asosiy Vizualizatsiya Maydoni -->
+        <div class="visualization-container">
+            <canvas id="grid-canvas"></canvas>
+            <div class="instructions">
+                <p>🖱️ <strong>Bosing va Torting</strong> - to'siqlarni qo'shish/o'chirish uchun</p>
+                <p>🎯 <strong>Sichqonchani harakatlantiring</strong> - maqsad nuqtasini belgilash uchun</p>
+                <p>🏃 <strong>Agentlar</strong> tanlangan algoritm yordamida kursorni quvadi</p>
+            </div>
+        </div>
+
+        <!-- Algoritm Ma'lumotlari Paneli -->
+        <div class="info-panel">
+            <div class="algorithm-info" id="algorithm-info">
+                <h3>📚 Kenglik Bo'yicha Qidiruv (BFS)</h3>
+                <p><strong>Qanday ishlaydi:</strong> BFS joriy chuqurlikdagi barcha qo'shnilarni keyingi chuqurlik darajasidagi tugunlarga o'tishdan oldin tekshiradi. Keyingi qaysi tugunni ko'rish kerakligini kuzatish uchun navbat (FIFO) ishlatadi.</p>
+                <p><strong>Xususiyatlari:</strong></p>
+                <ul>
+                    <li>Og'irliksiz graflarda eng qisqa yo'lni kafolatlaydi</li>
+                    <li>Tugunlarni qatma-qat tekshiradi</li>
+                    <li>Vaqt murakkabligi: O(V + E)</li>
+                </ul>
+            </div>
+
+            <!-- Belgilar -->
+            <div class="legend">
+                <h4>Belgilar:</h4>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #2ecc71;"></span>
+                        <span>Agent (Boshlang'ich)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #e74c3c;"></span>
+                        <span>Maqsad (Kursor)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #34495e;"></span>
+                        <span>To'siq</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #3498db;"></span>
+                        <span>Tekshirilgan Tugunlar</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #f1c40f;"></span>
+                        <span>Yo'l / MST</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistika Paneli -->
+        <div class="stats-panel">
+            <div class="stat-item">
+                <span class="stat-label">Tekshirilgan Tugunlar:</span>
+                <span class="stat-value" id="nodes-explored">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Yo'l Uzunligi:</span>
+                <span class="stat-value" id="path-length">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Algoritm Vaqti:</span>
+                <span class="stat-value" id="algorithm-time">0ms</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Fayllari -->
+    <script src="js/grid.js"></script>
+    <script src="js/algorithms.js"></script>
+    <script src="js/agent.js"></script>
+    <script src="js/visualizer.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
