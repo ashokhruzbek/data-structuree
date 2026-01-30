@@ -5,8 +5,9 @@
  * 
  * Bu modul yo'l topish algoritmlarini amalga oshiradi:
  * 1. Kenglik Bo'yicha Qidiruv (BFS) - Og'irliksiz graflarda eng qisqa yo'lni topadi
- * 2. Dijkstra Algoritmi - Og'irlikli graflarda eng qisqa yo'lni topadi
- * 3. Prim Algoritmi - Minimal Qamrab Oluvchi Daraxt (MST) quradi
+ * 2. Chuqurlik Bo'yicha Qidiruv (DFS) - Chuqurga kirib, keyin qaytadi
+ * 3. Dijkstra Algoritmi - Og'irlikli graflarda eng qisqa yo'lni topadi
+ * 4. Prim Algoritmi - Minimal Qamrab Oluvchi Daraxt (MST) quradi
  * 
  * Har bir algoritm vizualizatsiya uchun qadam-baqadam
  * tekshirish kuzatuvini o'z ichiga oladi.
@@ -115,6 +116,125 @@ class Algorithms {
         }
 
         // Yo'l topilmadi
+        const endTime = performance.now();
+        return {
+            path: [],
+            explored: explorationOrder,
+            nodesExplored: explorationOrder.length,
+            pathLength: 0,
+            time: endTime - startTime,
+            found: false
+        };
+    }
+
+    /**
+     * ===========================================
+     * CHUQURLIK BO'YICHA QIDIRUV (DFS)
+     * ===========================================
+     * 
+     * DFS bir yo'nalishda iloji boricha chuqurga kirib ketadi,
+     * keyin orqaga qaytib boshqa yo'nalishlarni tekshiradi.
+     * Bu eng qisqa yo'lni KAFOLATLAMAYDI, lekin ba'zi holatlarda foydali.
+     * 
+     * Algoritm Bosqichlari:
+     * 1. Boshlang'ich tugundan boshlash
+     * 2. Boshlang'ich tugunni stekga qo'shish
+     * 3. Stek bo'sh bo'lmaguncha:
+     *    a. Stek oxiridan tugunni olish (LIFO)
+     *    b. Agar tashrif etilmagan bo'lsa:
+     *       - Tashrif etilgan deb belgilash
+     *       - Agar maqsad bo'lsa, yo'lni qayta tiklash
+     *       - Barcha qo'shnilarni stekga qo'shish
+     * 
+     * Vaqt Murakkabligi: O(V + E)
+     * Xotira Murakkabligi: O(V)
+     * 
+     * Xususiyatlari:
+     * - Chuqurroq kirib ketadi
+     * - Yo'li ba'zan aylanma (uzunroq) bo'ladi
+     * - Labirintlarda foydali
+     * 
+     * @param {Object} start - Boshlang'ich pozitsiya {x, y}
+     * @param {Object} target - Maqsad pozitsiya {x, y}
+     * @returns {Object} Yo'l, tekshirilgan tugunlar va statistikani o'z ichiga olgan natija
+     */
+    dfs(start, target) {
+        const startTime = performance.now();
+        
+        // Oldingi vizualizatsiya ma'lumotlarini tozalash
+        this.grid.clearVisualization();
+
+        // DFS uchun stek - tekshirish kerak bo'lgan pozitsiyalarni saqlaydi (LIFO tartibi)
+        const stack = [];
+        
+        // Tashrif etilgan tugunlarni kuzatish uchun to'plam
+        const visited = new Set();
+        
+        // Har bir tugunning ota-onasini saqlash uchun Map (yo'lni qayta tiklash uchun)
+        const parent = new Map();
+        
+        // Qadam-baqadam vizualizatsiya uchun tekshirish tartibini kuzatish
+        const explorationOrder = [];
+
+        // Boshlang'ich pozitsiya bilan ishga tushirish
+        const startKey = Grid.positionKey(start.x, start.y);
+        stack.push(start);
+        parent.set(startKey, null);
+
+        // DFS asosiy sikli
+        while (stack.length > 0) {
+            // Stek oxiridan elementni olish (LIFO - Last In First Out)
+            const current = stack.pop();
+            const currentKey = Grid.positionKey(current.x, current.y);
+
+            // Agar allaqachon tashrif etilgan bo'lsa, o'tkazib yuborish
+            if (visited.has(currentKey)) {
+                continue;
+            }
+
+            // Tashrif etilgan deb belgilash
+            visited.add(currentKey);
+
+            // Vizualizatsiya uchun tekshirishni qayd etish
+            explorationOrder.push({ ...current });
+            this.grid.markExplored(current.x, current.y);
+
+            // Maqsadga yetib keldikmi tekshirish
+            if (current.x === target.x && current.y === target.y) {
+                const path = this.reconstructPath(parent, target);
+                const endTime = performance.now();
+                
+                this.grid.setPath(path);
+                
+                return {
+                    path: path,
+                    explored: explorationOrder,
+                    nodesExplored: explorationOrder.length,
+                    pathLength: path.length,
+                    time: endTime - startTime,
+                    found: true
+                };
+            }
+
+            // Barcha qo'shnilarni stekga qo'shish (teskari tartibda)
+            const neighbors = this.grid.getNeighbors(current.x, current.y);
+            
+            // Qo'shnilarni teskari tartibda qo'shish
+            for (let i = neighbors.length - 1; i >= 0; i--) {
+                const neighbor = neighbors[i];
+                const neighborKey = Grid.positionKey(neighbor.x, neighbor.y);
+
+                // Faqat tashrif etilmagan qo'shnilarni qo'shish
+                if (!visited.has(neighborKey)) {
+                    if (!parent.has(neighborKey)) {
+                        parent.set(neighborKey, currentKey);
+                    }
+                    stack.push(neighbor);
+                }
+            }
+        }
+
+        // Yo'l topilmadi (DFS)
         const endTime = performance.now();
         return {
             path: [],

@@ -262,7 +262,7 @@ class AgentManager {
         // Yangi yo'l topishdan oldin vizualizatsiyani tozalash
         this.grid.clearVisualization();
         
-        // Prim algoritmi uchun maqsadga yo'l topmaymiz
+        // Prim algoritmi uchun maqsadga yo'l topmaymiz - MST quradi
         if (this.currentAlgorithm === 'prim') {
             // Birinchi agent pozitsiyasidan Prim ni ishga tushirish
             if (this.agents.length > 0) {
@@ -276,7 +276,7 @@ class AgentManager {
             return;
         }
         
-        // BFS va Dijkstra uchun har bir agent uchun maqsadga yo'l topish
+        // BFS, DFS va Dijkstra uchun har bir agent uchun maqsadga yo'l topish
         let totalExplored = 0;
         let totalPathLength = 0;
         let totalTime = 0;
@@ -288,6 +288,8 @@ class AgentManager {
             // Algoritmni tanlash
             if (this.currentAlgorithm === 'bfs') {
                 result = this.algorithms.bfs(start, target);
+            } else if (this.currentAlgorithm === 'dfs') {
+                result = this.algorithms.dfs(start, target);
             } else if (this.currentAlgorithm === 'dijkstra') {
                 result = this.algorithms.dijkstra(start, target);
             }
